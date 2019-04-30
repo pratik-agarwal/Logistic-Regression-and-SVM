@@ -327,3 +327,20 @@ print('\n Validation set Accuracy:' + str(100 * np.mean((predicted_label_b == va
 # Find the accuracy on Testing Dataset
 predicted_label_b = mlrPredict(W_b, test_data)
 print('\n Testing set Accuracy:' + str(100 * np.mean((predicted_label_b == test_label).astype(float))) + '%')
+
+
+# Testing th ouput:
+
+# Attempt 1:
+
+#  Training set Accuracy:92.746%
+
+#  Validation set Accuracy:91.51%
+
+#  Testing set Accuracy:91.88%
+
+#  Training set Accuracy:93.448%
+
+#  Validation set Accuracy:92.47999999999999%
+
+#  Testing set Accuracy:92.55%
