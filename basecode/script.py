@@ -117,9 +117,22 @@ def blrObjFunction(initialWeights, *args):
     ##################
     # HINT: Do not forget to add the bias term to your input data
 
-    # Adding Bias code here
-
-    bias_term = np.ones(n_data, 1)
+    features_new = n_features + 1
+    w = initialWeights.reshape((features_new,1))
+    bias = np.ones((n_data,1))
+#   print(bias)
+#   print(w)  
+    x = np.hstack((bias,train_data))
+#   print(x)
+    z = np.dot(x,w)
+    theta = sigmoid(z)
+#   print("sigmoid",theta)
+    error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
+    error = -np.sum(error) / n_data
+    # print("Error value ",error)
+    error_grad = (theta - labeli) * x
+    error_grad = np.sum(error_grad, axis=0) / n_data
+#   print("error_grad",error_gradient)
 
     return error, error_grad
 
