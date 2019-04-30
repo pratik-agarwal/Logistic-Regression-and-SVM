@@ -241,6 +241,16 @@ def mlrPredict(W, data):
     ##################
     # HINT: Do not forget to add the bias term to your input data
 
+    size = data.shape[0]
+    bias = np.ones((size,1))
+    x = np.hstack((bias,data))
+    prod = np.dot(x,W)
+    num = np.exp(prod)
+    denom = np.sum(np.exp(prod))
+    label = num / denom
+    label = np.argmax(label, axis=1)
+    label = label.reshape((size,1))
+
     return label
 
 
