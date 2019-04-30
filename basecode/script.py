@@ -124,8 +124,7 @@ def blrObjFunction(initialWeights, *args):
 #   print(w)  
     x = np.hstack((bias,train_data))
 #   print(x)
-    z = np.dot(x,w)
-    theta = sigmoid(z)
+    theta = sigmoid((np.dot(x,w)))
 #   print("sigmoid",theta)
     error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
     error = -np.sum(error) / n_data
@@ -167,8 +166,7 @@ def blrPredict(W, data):
 
     bias = np.ones((data.shape[0],1))
     d = np.hstack((bias,data))
-    z = np.dot(d,W)
-    label = sigmoid(z)
+    label = sigmoid((np.dot(d,W)))
     label = np.argmax(label, axis = 1) # Each class - Maximum
     label = label.reshape((data.shape[0], 1))
 
@@ -327,20 +325,3 @@ print('\n Validation set Accuracy:' + str(100 * np.mean((predicted_label_b == va
 # Find the accuracy on Testing Dataset
 predicted_label_b = mlrPredict(W_b, test_data)
 print('\n Testing set Accuracy:' + str(100 * np.mean((predicted_label_b == test_label).astype(float))) + '%')
-
-
-# Testing th ouput:
-
-# Attempt 1:
-
-#  Training set Accuracy:92.746%
-
-#  Validation set Accuracy:91.51%
-
-#  Testing set Accuracy:91.88%
-
-#  Training set Accuracy:93.448%
-
-#  Validation set Accuracy:92.47999999999999%
-
-#  Testing set Accuracy:92.55%
