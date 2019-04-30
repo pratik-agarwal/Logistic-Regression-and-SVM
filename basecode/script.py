@@ -117,6 +117,10 @@ def blrObjFunction(initialWeights, *args):
     ##################
     # HINT: Do not forget to add the bias term to your input data
 
+    # Adding Bias code here
+
+    bias_term = np.ones(n_data, 1)
+
     return error, error_grad
 
 
@@ -141,6 +145,19 @@ def blrPredict(W, data):
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
+
+    # bias = np.ones(data.shape[0]) * 1
+    # data = np.column_stack(data, bias)
+    # z = sigmoid(np.dot(data, W)) # Probability
+    # label = np.argmax(z, axis = 1) # Each class - Maximum
+    # label = label.reshape(data.shape[0], 1)
+
+    bias = np.ones((data.shape[0],1))
+    d = np.hstack((bias,data))
+    z = np.dot(d,W)
+    label = sigmoid(z)
+    label = np.argmax(label, axis = 1) # Each class - Maximum
+    label = label.reshape((data.shape[0], 1))
 
     return label
 
