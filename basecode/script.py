@@ -201,8 +201,22 @@ def mlrObjFunction(params, *args):
     ##################
     # HINT: Do not forget to add the bias term to your input data
 
+    bias = np.ones((n_data,1))
+    x = np.hstack((bias,train_data))
+    features_new = n_feature + 1
+    w = params.reshape((features_new,n_class))
+    prod = np.dot(x , w)
+    numerator = np.exp(prod)
+    denominator = np.sum((np.exp(prod)),axis = 1).reshape(n_data , 1)
+    theta = numerator / denominator
+    y = labeli * np.log(theta)
+    error = (-1 * np.sum(np.sum(y))) / n_data
+    error_grad = (np.dot(x.T, (theta - labeli))) / n_data
+    
+    return error, error_grad.flatten()
 
-    return error, error_grad
+
+    # return error, error_grad
 
 
 def mlrPredict(W, data):
