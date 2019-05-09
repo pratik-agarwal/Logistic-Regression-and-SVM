@@ -3,7 +3,9 @@ from scipy.io import loadmat
 from scipy.optimize import minimize
 from sklearn import svm
 import matplotlib.pyplot as plt
-
+import time
+from sklearn.metrics import confusion_matrix
+from sklearn.svm import SVC
 
 def preprocess():
     """ 
@@ -116,25 +118,45 @@ def blrObjFunction(initialWeights, *args):
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
-
+    
+#     # print("BLR Training Data Shape : ", train_data.shape)
+#     # print("Labeli Value ", labeli)
+#     w = initialWeights.reshape((n_feature+1,1))
+#     # print(w[0:10, :])
+#     # print("IW Shape ", initialWeights.shape)
+#     bias_term = np.ones((n_data,1))
+#     x = np.hstack((bias_term,train_data))
+#     # print("X Shape ", x.shape)
+#     # print("Dot Value Shape ",dot_val.shape)
+#     # print("Dot Value ", dot_val[0:5,:])
+#     theta = sigmoid(np.dot(x,w))
+#     # print("Theta Shape ", theta.shape)
+#     # print("Labeli Shape ", labeli.shape)
+#     # print("Theta Value ", theta[0:5,:])
+#     error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
+#     error = -np.sum(error) / n_data
+#     # print("Error value ",error)
+#     error_grad = (theta - labeli) * x
+#     error_grad = np.sum(error_grad, axis=0) / n_data
+    
     features_new = n_features + 1
     w = initialWeights.reshape((features_new,1))
     bias = np.ones((n_data,1))
-#   print(bias)
-#   print(w)  
+#     print(bias)
+#     print(w)  
     x = np.hstack((bias,train_data))
-#   print(x)
-    theta = sigmoid((np.dot(x,w)))
-#   print("sigmoid",theta)
+#     print(x)
+    z = np.dot(x,w)
+    theta = sigmoid(z)
+#     print("sigmoid",theta)
     error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
     error = -np.sum(error) / n_data
     # print("Error value ",error)
     error_grad = (theta - labeli) * x
     error_grad = np.sum(error_grad, axis=0) / n_data
-#   print("error_grad",error_gradient)
-
+#     print("error_grad",error_gradient)
+    
     return error, error_grad
-
 
 def blrPredict(W, data):
     """
@@ -157,18 +179,14 @@ def blrPredict(W, data):
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
-
-    # bias = np.ones(data.shape[0]) * 1
-    # data = np.column_stack(data, bias)
-    # z = sigmoid(np.dot(data, W)) # Probability
-    # label = np.argmax(z, axis = 1) # Each class - Maximum
-    # label = label.reshape(data.shape[0], 1)
-
+    
     bias = np.ones((data.shape[0],1))
     d = np.hstack((bias,data))
-    label = sigmoid((np.dot(d,W)))
+    z = np.dot(d,W)
+    label = sigmoid(z)
     label = np.argmax(label, axis = 1) # Each class - Maximum
     label = label.reshape((data.shape[0], 1))
+    
 
     return label
 
@@ -176,13 +194,11 @@ def mlrObjFunction(params, *args):
     """
     mlrObjFunction computes multi-class Logistic Regression error function and
     its gradient.
-
     Input:
         initialWeights_b: the weight vector of size (D + 1) x 10
         train_data: the data matrix of size N x D
         labeli: the label vector of size N x 1 where each entry can be either 0 or 1
                 representing the label of corresponding feature vector
-
     Output:
         error: the scalar value of error function of multi-class logistic regression
         error_grad: the vector of size (D+1) x 10 representing the gradient of
@@ -198,7 +214,7 @@ def mlrObjFunction(params, *args):
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
-
+    
     bias = np.ones((n_data,1))
     x = np.hstack((bias,train_data))
     features_new = n_feature + 1
@@ -212,10 +228,6 @@ def mlrObjFunction(params, *args):
     error_grad = (np.dot(x.T, (theta - labeli))) / n_data
     
     return error, error_grad.flatten()
-
-
-    # return error, error_grad
-
 
 def mlrPredict(W, data):
     """
@@ -238,7 +250,6 @@ def mlrPredict(W, data):
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
-
     size = data.shape[0]
     bias = np.ones((size,1))
     x = np.hstack((bias,data))
@@ -251,10 +262,10 @@ def mlrPredict(W, data):
 
     return label
 
-
 """
 Script for Logistic Regression
 """
+start_time_LR = time.time()
 train_data, train_label, validation_data, validation_label, test_data, test_label = preprocess()
 
 # number of classes
@@ -283,28 +294,97 @@ for i in range(n_class):
 # Find the accuracy on Training Dataset
 predicted_label = blrPredict(W, train_data)
 print('\n Training set Accuracy:' + str(100 * np.mean((predicted_label == train_label).astype(float))) + '%')
+print(confusion_matrix(train_label, predicted_label, labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]))
 
 # Find the accuracy on Validation Dataset
 predicted_label = blrPredict(W, validation_data)
 print('\n Validation set Accuracy:' + str(100 * np.mean((predicted_label == validation_label).astype(float))) + '%')
+print(confusion_matrix(validation_label, predicted_label, labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])) 
 
 # Find the accuracy on Testing Dataset
 predicted_label = blrPredict(W, test_data)
 print('\n Testing set Accuracy:' + str(100 * np.mean((predicted_label == test_label).astype(float))) + '%')
+print(confusion_matrix(test_label, predicted_label, labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
+stop_time_LR = time.time() - start_time_LR
+print("Time taken for Logistic Regression {}.seconds\n".format(str(stop_time_LR)))
 
-"""
-Script for Support Vector Machine
-"""
+# Code for SVM
+print("Learning SVM Using Linear Kernel")
+start_time_linear_kernel = time.time()
+svm = SVC(kernel = 'linear')
+#train_label = train_label.flatten()
+indexes = np.random.randint(50000, size = 10000)
+sample_data = train_data[indexes, :]
+sample_label = train_label[indexes, :]
+svm.fit(sample_data, sample_label.flatten())
 
-print('\n\n--------------SVM-------------------\n\n')
-##################
-# YOUR CODE HERE #
-##################
+traning_accuracy = svm.score(train_data, train_label)
+traning_accuracy = str(100*traning_accuracy)
+print("Traning data Accuracy for Linear Kernel: {}%\n".format(traning_accuracy))
+validation_accuracy = svm.score(validation_data, validation_label)
+validation_accuracy = str(100*validation_accuracy)
+print("Validation data Accuracy for Linear Kernel: {}%\n".format(validation_accuracy))
+test_accuracy = svm.score(test_data, test_label)
+test_accuracy = str(100*test_accuracy)
+print("Test data Accuracy for Linear Kernel: {}%\n".format(test_accuracy))
+
+time_linear_kernel = time.time() - start_time_linear_kernel
+print("Time taken for SVM using Linear Kernel {}.seconds\n\n\n".format(str(time_linear_kernel)))
 
 
-"""
-Script for Extra Credit Part
-"""
+print("SVM with radial basis function with value of gamma setting to 1 ")
+start_time_rbf = time.time()
+svm = SVC(kernel = 'rbf', gamma = 1.0)
+#train_label = train_label.flatten()
+indexes = np.random.randint(50000, size = 10000)
+sample_data = train_data[indexes, :]
+sample_label = train_label[indexs, :]
+svm.fit(sample_data, sample_label.flatten())
+traning_accuracy_rbf = svm.score(train_data, train_label)
+iraning_accuracy_rbf = str(100*traning_accuracy_rbf)
+print("Traning data Accuracy for rbf Kernel: {}%\n".format(traning_accuracy_rbf))
+validation_accuracy_rbf = svm.score(validation_data, validation_label)
+validation_accuracy_rbf= str(100*validation_accuracy_rbf)
+print("Validation data Accuracy for rbf Kernel: {}%\n".format(validation_accuracy_rbf))
+test_accuracy_rbf = svm.score(test_data, test_label)
+test_accuracy_rbf = str(100*test_accuracy_rbf)
+print("Test data Accuracy for rbf Kernel: {}%\n".format(test_accuracy_rbf))
+
+time_rbf = time.time() - start_time_rbf
+print("Time taken for SVM using rbf {}seconds\n\n\n".format(str(time_rbf)))
+
+
+
+print(" SVM with radial basis function with value of gamma setting to default and varying value of C")
+start_time_varing_C = time.time()
+C_val = [1.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]
+
+traning_accuracy_C_val = np.zeros(11)
+validation_accuracy_C_val = np.zeros(11)
+test_accuracy_C_val = np.zeros(11)
+
+for i in range(0, len(C_val)):
+    print("Computing for C = {}".format(C_val[i]))
+    svm = SVC(C = C_val[i], kernel = 'rbf')
+    #train_label = train_label.flatten()
+    indexes = np.random.randint(50000, size = 10000)
+    sample_data = train_data[indexes, :]
+    sample_label = train_label[indexes, :]
+    svm.fit(sample_data, sample_label.flatten())
+    traning_accuracy_C_val[i] = svm.score(train_data, train_label)
+    traning_accuracy_C_val[i] = str(100 * traning_accuracy_C_val[i])
+    print("Traning data Accuracy: {}%\n".format(traning_accuracy_C_val[i]))
+    validation_accuracy_C_val[i] = svm.score(validation_data, validation_label)
+    validation_accuracy_C_val[i] = 100 * validation_accuracy_C_val[i]
+    print("Validation data Accuracy: {}%\n".format(str(validation_accuracy_C_val[i])))
+    test_accuracy_C_val[i] = svm.score(test_data, test_label)
+    test_accuracy_C_val[i] = 100 * test_accuracy_C_val[i]
+    print("Test data Accuracy: {}%\n".format(str(test_accuracy_C_val[i])))
+
+    time_varing_C = time.time() - start_time_varing_C
+    print("Time taken for SVM with radial basis function and varing C is {}.seconds\n\n\n".format(str(start_time_varing_C)))
+
+
 # FOR EXTRA CREDIT ONLY
 W_b = np.zeros((n_feature + 1, n_class))
 initialWeights_b = np.zeros((n_feature + 1, n_class))
