@@ -292,7 +292,7 @@ print("Time taken for Logistic Regression {}.seconds\n".format(str(stop_time_LR)
 
 # Code for SVM
 print("Learning SVM Using Linear Kernel")
-start_time_linear_kernel = time.time()
+
 svm = SVC(kernel = 'linear')
 #train_label = train_label.flatten()
 indexes = np.random.randint(50000, size = 10000)
@@ -309,8 +309,8 @@ print("Validation data Accuracy for Linear Kernel: {}%\n".format(validation_accu
 test_accuracy = svm.score(test_data, test_label)
 test_accuracy = str(100*test_accuracy)
 print("Test data Accuracy for Linear Kernel: {}%\n".format(test_accuracy))
-
 time_linear_kernel = time.time() - start_time_linear_kernel
+
 print("Time taken for SVM using Linear Kernel {}.seconds\n\n\n".format(str(time_linear_kernel)))
 
 
@@ -335,10 +335,32 @@ print("Test data Accuracy for rbf Kernel: {}%\n".format(test_accuracy_rbf))
 time_rbf = time.time() - start_time_rbf
 print("Time taken for SVM using rbf {}seconds\n\n\n".format(str(time_rbf)))
 
+######
+print("SVM with radial basis function with default gamma ")
+start_time_rbf = time.time()
+svm = SVC(kernel = 'rbf', gamma = "auto")
+#train_label = train_label.flatten()
+indexes = np.random.randint(50000, size = 10000)
+sample_data = train_data[indexes, :]
+sample_label = train_label[indexes, :]
+svm.fit(sample_data, sample_label.flatten())
+traning_accuracy_rbf = svm.score(train_data, train_label)
+traning_accuracy_rbf = str(100*traning_accuracy_rbf)
+print("Traning data Accuracy for rbf Kernel: {}%\n".format(traning_accuracy_rbf))
+validation_accuracy_rbf = svm.score(validation_data, validation_label)
+validation_accuracy_rbf= str(100*validation_accuracy_rbf)
+print("Validation data Accuracy for rbf Kernel: {}%\n".format(validation_accuracy_rbf))
+test_accuracy_rbf = svm.score(test_data, test_label)
+test_accuracy_rbf = str(100*test_accuracy_rbf)
+print("Test data Accuracy for rbf Kernel: {}%\n".format(test_accuracy_rbf))
+
+time_rbf = time.time() - start_time_rbf
+print("Time taken for SVM using rbf and default gamma {}seconds\n\n\n".format(str(time_rbf)))
+
 
 
 print(" SVM with radial basis function with value of gamma setting to default and varying value of C")
-
+start_time_varing_C = time.time()
 C_val = [1.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]
 
 traning_accuracy_C_val = np.zeros(11)
@@ -346,7 +368,6 @@ validation_accuracy_C_val = np.zeros(11)
 test_accuracy_C_val = np.zeros(11)
 
 for i in range(0, len(C_val)):
-    start_time_varing_C = time.time()
     print("Computing for C = {}".format(C_val[i]))
     svm = SVC(C = C_val[i], kernel = 'rbf', gamma = 'auto')
     #train_label = train_label.flatten()
@@ -365,7 +386,26 @@ for i in range(0, len(C_val)):
     print("Test data Accuracy: {}%\n".format(str(test_accuracy_C_val[i])))
 
     time_varing_C = time.time() - start_time_varing_C
-    print("Time taken for SVM with radial basis function and varying C is {}.seconds\n\n\n".format(str(time_varing_C)))
+     print("Time taken for SVM with radial basis function and varing C is {}.seconds\n\n\n".format(str(time_varing_C)))
+    
+    
+print("Computing Optimal SVM on whole training dataset with radial basis function kernal and value of gamma setting to default and C = 50 ")
+start_time_rbf = time.time()
+svm = SVC(kernel = 'rbf', gamma = "auto", C = 50)
+#train_label = train_label.flatten()
+svm.fit(train_data, train_label.flatten())
+traning_accuracy_rbf = svm.score(train_data, train_label)
+traning_accuracy_rbf = str(100*traning_accuracy_rbf)
+print("Traning data Accuracy for rbf Kernel: {}%\n".format(traning_accuracy_rbf))
+validation_accuracy_rbf = svm.score(validation_data, validation_label)
+validation_accuracy_rbf= str(100*validation_accuracy_rbf)
+print("Validation data Accuracy for rbf Kernel: {}%\n".format(validation_accuracy_rbf))
+test_accuracy_rbf = svm.score(test_data, test_label)
+test_accuracy_rbf = str(100*test_accuracy_rbf)
+print("Test data Accuracy for rbf Kernel: {}%\n".format(test_accuracy_rbf))
+
+time_rbf = time.time() - start_time_rbf
+print("Time taken for SVM with best choice of parameters {}seconds\n\n\n".format(str(time_rbf)))
 
 
 # FOR EXTRA CREDIT ONLY
