@@ -119,26 +119,6 @@ def blrObjFunction(initialWeights, *args):
     ##################
     # HINT: Do not forget to add the bias term to your input data
     
-#     # print("BLR Training Data Shape : ", train_data.shape)
-#     # print("Labeli Value ", labeli)
-#     w = initialWeights.reshape((n_feature+1,1))
-#     # print(w[0:10, :])
-#     # print("IW Shape ", initialWeights.shape)
-#     bias_term = np.ones((n_data,1))
-#     x = np.hstack((bias_term,train_data))
-#     # print("X Shape ", x.shape)
-#     # print("Dot Value Shape ",dot_val.shape)
-#     # print("Dot Value ", dot_val[0:5,:])
-#     theta = sigmoid(np.dot(x,w))
-#     # print("Theta Shape ", theta.shape)
-#     # print("Labeli Shape ", labeli.shape)
-#     # print("Theta Value ", theta[0:5,:])
-#     error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
-#     error = -np.sum(error) / n_data
-#     # print("Error value ",error)
-#     error_grad = (theta - labeli) * x
-#     error_grad = np.sum(error_grad, axis=0) / n_data
-    
     features_new = n_features + 1
     w = initialWeights.reshape((features_new,1))
     bias = np.ones((n_data,1))
@@ -148,14 +128,16 @@ def blrObjFunction(initialWeights, *args):
 #     print(x)
     z = np.dot(x,w)
     theta = sigmoid(z)
-#     print("sigmoid",theta)
-    error = labeli * np.log(theta) + (1.0 - labeli) * np.log(1.0 - theta)
-    error = -np.sum(error) / n_data
-    # print("Error value ",error)
+#     print("sigmoid",theta) 
+    first = labeli * np.log(theta)
+    second = (1.0 - labeli) * np.log(1.0 - theta)
+    numerator = -np.sum(first + second)
+    denominator = n_data
+    error = numerator / denominator
+#     print("Error value ",error)
     error_grad = (theta - labeli) * x
     error_grad = np.sum(error_grad, axis=0) / n_data
-#     print("error_grad",error_gradient)
-    
+#   print("error_grad",error_grad)
     return error, error_grad
 
 def blrPredict(W, data):
@@ -338,10 +320,10 @@ svm = SVC(kernel = 'rbf', gamma = 1.0)
 #train_label = train_label.flatten()
 indexes = np.random.randint(50000, size = 10000)
 sample_data = train_data[indexes, :]
-sample_label = train_label[indexs, :]
+sample_label = train_label[indexes, :]
 svm.fit(sample_data, sample_label.flatten())
 traning_accuracy_rbf = svm.score(train_data, train_label)
-iraning_accuracy_rbf = str(100*traning_accuracy_rbf)
+traning_accuracy_rbf = str(100*traning_accuracy_rbf)
 print("Traning data Accuracy for rbf Kernel: {}%\n".format(traning_accuracy_rbf))
 validation_accuracy_rbf = svm.score(validation_data, validation_label)
 validation_accuracy_rbf= str(100*validation_accuracy_rbf)
@@ -356,7 +338,7 @@ print("Time taken for SVM using rbf {}seconds\n\n\n".format(str(time_rbf)))
 
 
 print(" SVM with radial basis function with value of gamma setting to default and varying value of C")
-start_time_varing_C = time.time()
+
 C_val = [1.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]
 
 traning_accuracy_C_val = np.zeros(11)
@@ -364,8 +346,9 @@ validation_accuracy_C_val = np.zeros(11)
 test_accuracy_C_val = np.zeros(11)
 
 for i in range(0, len(C_val)):
+    start_time_varing_C = time.time()
     print("Computing for C = {}".format(C_val[i]))
-    svm = SVC(C = C_val[i], kernel = 'rbf')
+    svm = SVC(C = C_val[i], kernel = 'rbf', gamma = 'auto')
     #train_label = train_label.flatten()
     indexes = np.random.randint(50000, size = 10000)
     sample_data = train_data[indexes, :]
@@ -382,10 +365,11 @@ for i in range(0, len(C_val)):
     print("Test data Accuracy: {}%\n".format(str(test_accuracy_C_val[i])))
 
     time_varing_C = time.time() - start_time_varing_C
-    print("Time taken for SVM with radial basis function and varing C is {}.seconds\n\n\n".format(str(start_time_varing_C)))
+    print("Time taken for SVM with radial basis function and varying C is {}.seconds\n\n\n".format(str(time_varing_C)))
 
 
 # FOR EXTRA CREDIT ONLY
+start = time.time()
 W_b = np.zeros((n_feature + 1, n_class))
 initialWeights_b = np.zeros((n_feature + 1, n_class))
 opts_b = {'maxiter': 100}
@@ -397,11 +381,16 @@ W_b = nn_params.x.reshape((n_feature + 1, n_class))
 # Find the accuracy on Training Dataset
 predicted_label_b = mlrPredict(W_b, train_data)
 print('\n Training set Accuracy:' + str(100 * np.mean((predicted_label_b == train_label).astype(float))) + '%')
+print(confusion_matrix(train_label, predicted_label_b, labels = [0,1,2,3,4,5,6,7,8,9]))
 
 # Find the accuracy on Validation Dataset
 predicted_label_b = mlrPredict(W_b, validation_data)
 print('\n Validation set Accuracy:' + str(100 * np.mean((predicted_label_b == validation_label).astype(float))) + '%')
+print(confusion_matrix(validation_label, predicted_label_b, labels = [0,1,2,3,4,5,6,7,8,9]))
 
 # Find the accuracy on Testing Dataset
 predicted_label_b = mlrPredict(W_b, test_data)
 print('\n Testing set Accuracy:' + str(100 * np.mean((predicted_label_b == test_label).astype(float))) + '%')
+print(confusion_matrix(test_label, predicted_label_b, labels = [0,1,2,3,4,5,6,7,8,9]))
+end_time = time.time() - start
+print("Time taken :{} .sec".format(str(end_time)))
